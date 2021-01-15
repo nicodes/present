@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+ db:
+  image: postgres:13.1
+  environment:
+   - POSTGRES_USER=$DB_USER
+   - POSTGRES_PASSWORD=$DB_PASSWORD
+  ports:
+   - $DB_PORT:$DB_PORT
+  volumes:
+   - ./db/data:/var/lib/postgresql/data
+  restart: always
+  command: -p $DB_PORT
