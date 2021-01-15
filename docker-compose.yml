@@ -28,3 +28,15 @@ services:
   volumes:
    - ./api:/app
    - /app/node_modules
+ ui:
+  build: ./ui
+  environment:
+   - NODE_ENV=$UI_NODE_ENV
+   - PORT=$UI_PORT
+   - REACT_APP_API_HOST
+  ports:
+   - $UI_PORT:$UI_PORT
+  volumes:
+   - ./ui:/app
+   - /app/node_modules
+  stdin_open: true
