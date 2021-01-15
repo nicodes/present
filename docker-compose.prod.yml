@@ -1,0 +1,47 @@
+version: "3.8"
+services:
+ db:
+  image: postgres:13.1-alpine
+  environment:
+   - POSTGRES_USER=$DB_USER
+   - POSTGRES_PASSWORD=$DB_PASSWORD
+  ports:
+   - $DB_PORT:$DB_PORT
+  volumes:
+   - ./db/data:/var/lib/postgresql/data
+  restart: always
+  command: -p $DB_PORT
+ api:
+  depends_on:
+   - db
+  build:
+   context: ./api
+   dockerfile: Dockerfile.prod
+  environment:
+   - NODE_ENV=$API_NODE_ENV
+   - PORT=$API_PORT
+   - PGHOST=db
+   - PGPORT=$DB_PORT
+   - PGUSER=$DB_USER
+   - PGPASSWORD=$DB_PASSWORD
+   - PGDATABASE=$DB_NAME
+  ports:
+   - $API_PORT:$API_PORT
+  volumes:
+   - /app/node_modules
+ ui_build:
+  build:
+   context: ./ui
+   dockerfile: Dockerfile.prod
+  environment:
+   - NODE_ENV=$UI_NODE_ENV
+   - REACT_APP_API_HOST
+  volumes:
+   - ./ui/build:/app/build
+   - /app/node_modules
+ ui_server:
+  image: nginx:1.19.4-alpine
+  ports:
+   - 80:80
+  volumes:
+   - ./ui/build:/usr/share/nginx/html
