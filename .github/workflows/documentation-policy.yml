@@ -1,0 +1,23 @@
+name: Documentation policy
+on:
+  push:
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  documentation-policy:
+    name: Documentation policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: ${{ github.event.repository.private && 1 || 0 }}
+      - name: Check documentation boundary
+        env:
+          REQUIRE_CLEAN_HISTORY: ${{ !github.event.repository.private }}
+        run: python3 .github/scripts/check-documentation.py
